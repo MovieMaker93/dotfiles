@@ -23,11 +23,11 @@
           - curl
           - node
           - npm
+          - node
+          - npm
           - wget
           - unzip
           - golang-go
-          - rust
-          - helm
           - ripgrep
           - zsh
           - fzf
