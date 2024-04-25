@@ -13,16 +13,16 @@
       ansible.builtin.set_fact:
         remote_regular_user: "{{ ansible_env.SUDO_USER or ansible_user_id }}"
 
-    - name: Install packages
+    - name: Install packages Ubuntu
       ansible.builtin.apt:
-        package:
+        pkg:
           - git
           - htop
-          - neovim
           - build-essential
           - curl
           - node
           - npm
+          - python
           - node
           - npm
           - wget
@@ -33,8 +33,52 @@
           - fzf
           - tmux
           - make
+          - yq
+          - jq
         state: present
       when: ansible_facts['distribution'] == "Ubuntu"
+
+    - name: Install packages Macos
+      community.general.homebrew:
+        package:
+          - git
+          - htop
+          - neovim
+          - curl
+          - node
+          - npm
+          - node
+          - wget
+          - unzip
+          - go
+          - lua
+          - rust
+          - groovy
+          - jq
+          - yq
+          - ripgrep
+          - zsh
+          - fzf
+          - tmux
+          - make
+          - docker
+          - python 
+          - zsh-autosuggestions
+          - zsh-syntax-highlighting
+          - zsh-vi-mode
+          - powerlevel10k
+        state: present
+      when: ansible_facts['distribution'] == "MacOSX"
+
+    - name: Install packages Macos CASK
+      community.general.homebrew:
+        package:
+          - alfred
+          - rectangle
+          - iterm2
+          - obsidian
+        state: present
+      when: ansible_facts['distribution'] == "MacOSX"
 
     - name: Change shell to zsh
       ansible.builtin.user:
@@ -141,6 +185,10 @@
 
     - name: Check if Jetbrains Mono exists
       ansible.builtin.shell: "mkdir -p ~{{ remote_regular_user }}/.fonts"
+
+    - name: Install build essential macos
+      ansible.builtin.shell: "xcode-select --install"
+      when: ansible_facts['distribution'] == "MacOSX"
 
     - name: Download Jetbrains mono
       when: jetbrains_mono_exists is failed
