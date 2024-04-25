@@ -21,7 +21,8 @@
           - neovim
           - build-essential
           - curl
-          - httpd
+          - node
+          - npm
           - wget
           - unzip
           - golang-go
@@ -31,11 +32,9 @@
           - zsh
           - fzf
           - tmux
-          - zlib
-          - zlib-devel
           - make
         state: present
-        when: ansible_facts['distribution'] == "Ubuntu"
+      when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: Change shell to zsh
       ansible.builtin.user:
@@ -50,12 +49,15 @@
           - curl
           - gnupg2
           - lsb-release
+      when: ansible_facts['distribution'] == "Ubuntu"
+
 
     - name: add docker apt key
       become: yes
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
+      when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: add docker apt repo
       become: yes
@@ -63,6 +65,8 @@
         repo: "deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
         state: present
         update_cache: yes
+      when: ansible_facts['distribution'] == "Ubuntu"
+
 
     - name: Install Docker
       ansible.builtin.apt:
@@ -73,17 +77,20 @@
           - docker-buildx-plugin
           - docker-compose-plugin
         state: present
+      when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: Add Docker group
       ansible.builtin.group:
         name: docker
         state: present
+      when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: Add user to docker group
       ansible.builtin.user:
         name: "{{ remote_regular_user }}"
         groups: docker
         append: true
+      when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: start and enable docker daemon
       become: yes
@@ -103,11 +110,13 @@
       apt_key:
        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
        state: present
+      when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: Add Google official GPG key for Terraform
       apt_key:
        url: ttps://apt.releases.hashicorp.com/gpg
        state: present
+      when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: Add Kubernetes Repository
       apt_repository:
@@ -115,23 +124,13 @@
        state: present
        filename: kubernetes
        mode: 0600
+      when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: Install kubectl
       ansible.builtin.apt:
         name: kubectl
         state: present
-
-    - name: Add Terraform Repository
-      apt_repository:
-       repo: deb [arch=amd64 signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com jammy main
-       state: present
-       filename: kubernetes
-       mode: 0600
-
-    - name: Install Terraform
-      ansible.builtin.apt:
-        name: terraform
-        state: present
+      when: ansible_facts['distribution'] == "Ubuntu"
 
 
     - name: Check if Jetbrains Mono exists
@@ -139,6 +138,9 @@
       register: jetbrains_mono_exists
       ignore_errors: true
       changed_when: false
+
+    - name: Check if Jetbrains Mono exists
+      ansible.builtin.shell: "mkdir -p ~{{ remote_regular_user }}/.fonts"
 
     - name: Download Jetbrains mono
       when: jetbrains_mono_exists is failed
