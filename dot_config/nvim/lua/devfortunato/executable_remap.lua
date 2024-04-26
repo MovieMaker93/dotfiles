@@ -47,3 +47,8 @@ vim.keymap.set("n", "<C-w><down>", "<C-w>-")
 
 -- Rename incremental
 vim.keymap.set("n", "<leader>rn", ":IncRename ")
+
+-- Split vertical and horizontal
+vim.keymap.set("n", "<leader>sh", "<cmd>new<CR>")
+vim.keymap.set("n", "<leader>sv", "<cmd>vnew<CR>")
+

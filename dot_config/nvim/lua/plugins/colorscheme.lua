@@ -6,7 +6,7 @@ return{
         name = "catppuccin",
         priority = 1000,
         opts = {
-            flavour = "mocha",
+            flavour = "macchiato",
             integrations = {
                 alpha = true,
                 cmp = true,

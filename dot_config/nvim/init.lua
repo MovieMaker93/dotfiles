@@ -18,6 +18,7 @@ vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
 require("lazy").setup('plugins', opts)
 require("devfortunato")
+require("devfortunato.global")
 
 vim.keymap.set("n", "<leader>i", vim.cmd.InspectTree)
 vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
