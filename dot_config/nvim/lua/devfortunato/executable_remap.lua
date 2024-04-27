@@ -52,3 +52,5 @@ vim.keymap.set("n", "<leader>rn", ":IncRename ")
 vim.keymap.set("n", "<leader>sh", "<cmd>new<CR>")
 vim.keymap.set("n", "<leader>sv", "<cmd>vnew<CR>")
 
+-- Go test run 
+vim.keymap.set("n", "<leader>gtr", "<cmd>GoTestRun<CR>")
