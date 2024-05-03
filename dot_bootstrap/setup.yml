@@ -1,6 +1,6 @@
 - name: Machine setup
   hosts: localhost
-  become: true
+  become: false
   connection: local
   gather_facts: true
   tasks:
