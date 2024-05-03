@@ -73,12 +73,12 @@
           - iterm2
           - obsidian
           - wezterm
-          - docker
         state: present
       when: ansible_facts['distribution'] == "MacOSX"
     - name: Change shell to zsh
       ansible.builtin.user:
         name: "{{ remote_regular_user }}"
+        become: yes
         shell: /usr/bin/zsh
     - name: install prerequisites for Docker repository
       become: yes
@@ -129,12 +129,14 @@
         name: docker
         state: started
         enabled: yes
+      when: ansible_facts['distribution'] == "MacOSX"
     - name: start and enable containerd daemon
       become: yes
       service:
         name: containerd
         state: started
         enabled: yes
+      when: ansible_facts['distribution'] == "MacOSX"
     - name: Add Google official GPG key
       apt_key:
         url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
