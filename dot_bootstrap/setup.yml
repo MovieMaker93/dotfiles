@@ -8,7 +8,7 @@
       debug: msg="{{ ansible_distribution }}"
     - name: Get my user
       ansible.builtin.set_fact:
-        remote_regular_user: "{{ ansible_env.SUDO_USER or ansible_user_id }}"
+        remote_regular_user: "{{ ansible_user_id }}"
     - name: Install packages Ubuntu
       ansible.builtin.apt:
         pkg:
