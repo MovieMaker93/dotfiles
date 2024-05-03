@@ -1,5 +1,6 @@
 local log = require("plenary.log"):new()
 local ns = vim.api.nvim_create_namespace "live-tests"
+local group = vim.api.nvim_create_augroup("devfortunato-magic", { clear = true })
 
 local test_function_query_string = [[
 (
@@ -75,7 +76,7 @@ local attach_to_buffer = function (output_bufnr, pattern, command)
     -- end, {})
 
     vim.api.nvim_create_autocmd("BufWritePost",{
-        group = vim.api.nvim_create_augroup("devfortunato-magic", {clear = true}),
+        group = group,
         pattern = pattern,
         callback = function ()
             vim.api.nvim_buf_clear_namespace(output_bufnr, ns, 0, -1)
@@ -131,3 +132,18 @@ vim.api.nvim_create_user_command("GoTestRun", function ()
     print("GoTestRun started")
     attach_to_buffer(vim.api.nvim_get_current_buf(), "*.go",{"go", "test", "./...", "-v", "-json"})
 end, {})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+    group = group,
+    pattern = "*",
+    desc = "Remove withespace on save",
+    command = "%s/\\s\\+$//e",
+})
+
+-- vim.api.nvim_create_autocmd({"BufEnter", "FileType"}, {
+--     group = group,
+--     pattern = "*",
+--     desc = "don't autocomment new line",
+--     command = "setlocal formatoptions-=c fortmatoptions-=r formatoptions-=o",
+-- })
+

@@ -8,20 +8,18 @@ return {
             formatters_by_ft = {
                 lua = { 'stylua' },
                 sh = { 'shfmt' },
-                go = { 'goimports', 'gofmt'},
-                yaml = {'yamlfmt'},
+                go = { 'goimports', 'gofmt', 'golines'},
+                yaml = {'yamlfmt', 'prettier'},
                 just = {'just'},
-                rust = {'rustfmt'}
+                rust = {'rustfmt'},
+                json = {'prettier'},
+                css = {'prettier'},
+                markdown = {'prettier'},
             },
-            format_on_save = function(bufnr)
-                if vim.b[bufnr].format_on_save then
-                    return {
-                        timeout_ms = 500,
-                        -- Filetypes to use LSP formatting for.
-                        lsp_fallback = vim.tbl_contains({ 'c', 'json', 'jsonc', 'rust' }, vim.bo[bufnr].filetype),
-                    }
-                end
-            end,
+            format_on_save = {
+                lsp_fallback = true,
+                timeout_ms = 500,
+            },
         },
         -- init = function()
         --     -- Use conform for gq.
