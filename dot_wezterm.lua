@@ -15,7 +15,7 @@ end
 
 -- This is where you actually apply your config choices
 -- change config now
-config.default_domain = 'WSL:Ubuntu-22.04'
+-- config.default_domain = 'WSL:Ubuntu-22.04'
 
 -- For example, changing the color scheme:
 -- config.color_scheme = 'Batman'
