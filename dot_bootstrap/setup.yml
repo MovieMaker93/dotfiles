@@ -71,6 +71,7 @@
           - iterm2
           - obsidian
           - wezterm
+          - docker
         state: present
       when: ansible_facts['distribution'] == "MacOSX"
     - name: Change shell to zsh
