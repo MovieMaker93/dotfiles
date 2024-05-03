@@ -9,6 +9,11 @@
     - name: Get my user
       ansible.builtin.set_fact:
         remote_regular_user: "{{ ansible_user_id }}"
+    - name: Install tpm
+      ansible.builtin.shell: "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
+    - name: Install build essential macos
+      ansible.builtin.shell: "xcode-select --install"
+      when: ansible_facts['distribution'] == "MacOSX"
     - name: Install packages Ubuntu
       ansible.builtin.apt:
         pkg:
@@ -58,11 +63,9 @@
           - tmux
           - make
           - python
-          - zsh-autosuggestions
-          - zsh-syntax-highlighting
-          - zsh-vi-mode
           - powerlevel10k
           - yarn
+          - tmuxinator
         state: present
       when: ansible_facts['distribution'] == "MacOSX"
     - name: Install packages Macos CASK
@@ -162,16 +165,13 @@
       ansible.builtin.shell: "ls ~{{ remote_regular_user }}/.fonts/JetBrainsMonoNerd*FontMono*"
       register: jetbrains_mono_exists
       ignore_errors: true
+      when: ansible_facts['distribution'] == "Ubuntu"
       changed_when: false
     - name: Check if Jetbrains Mono exists
       ansible.builtin.shell: "mkdir -p ~{{ remote_regular_user }}/.fonts"
-    - name: Install tpm
-      ansible.builtin.shell: "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
-    - name: Install build essential macos
-      ansible.builtin.shell: "xcode-select --install"
-      when: ansible_facts['distribution'] == "MacOSX"
+      when: ansible_facts['distribution'] == "Ubuntu"
     - name: Download Jetbrains mono
-      when: jetbrains_mono_exists is failed
+      when: jetbrains_mono_exists is failed and ansible_facts['distribution'] == "Ubuntu"
       ansible.builtin.unarchive:
         src: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip
         dest: "~{{ remote_regular_user }}/.fonts/"
@@ -182,4 +182,13 @@
       ansible.builtin.shell: "sh -c '$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)'"
     - name: Brew tap fonts
       ansible.builtin.shell: "brew tap homebrew/cask-fonts && brew install font-jetbrains-mono"
-    
+    - name: Download and install powerlevel10k theme, zsh-autosuggestions, zsh-syntax-highlighting
+      ansible.builtin.shell: |
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+        git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
+        echo "source ${(q-)PWD}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
+    - name: Install goimports and golines
+      ansible.builtin.shell: |
+        go install golang.org/x/tools/cmd/goimports@latest
+        go install github.com/segmentio/golines@latest

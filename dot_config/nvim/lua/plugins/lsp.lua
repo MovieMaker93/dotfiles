@@ -38,7 +38,7 @@ return {
 			cmp.setup({
 				preselect = "item",
 				completion = {
-					completeopt = "menu,menuone,noinsert",
+					completeopt = "menu,menuone,noselect",
 				},
 				sources = {
 					{ name = "nvim_lsp" },
@@ -102,9 +102,11 @@ return {
 		dependencies = {
 			{ "hrsh7th/cmp-nvim-lsp" },
 			{ "williamboman/mason-lspconfig.nvim" },
+			{ "folke/neodev.nvim" },
 		},
 		config = function()
 			-- This is where all the LSP shenanigans will live
+			require("neodev").setup({})
 			local lsp_zero = require("lsp-zero")
 			lsp_zero.extend_lspconfig()
 			lsp_zero.set_preferences({
@@ -133,9 +135,6 @@ return {
 				vim.keymap.set("n", "K", function()
 					vim.lsp.buf.hover()
 				end, opts)
-				vim.keymap.set("n", "<leader>vws", function()
-					vim.lsp.buf.workspace_symbol()
-				end, opts)
 				vim.keymap.set("n", "<leader>vd", function()
 					vim.diagnostic.open_float()
 				end, opts)
@@ -160,13 +159,57 @@ return {
 			end)
 
 			require("mason-lspconfig").setup({
-				ensure_installed = { "gopls", "pylsp", "tsserver", "rust_analyzer", "yamlls", "terraformls", "lua_ls" },
+				ensure_installed = {
+					-- "groovyls",
+					"gopls",
+					"pylsp",
+					"tsserver",
+					"rust_analyzer",
+					"yamlls",
+					"terraformls",
+					"lua_ls",
+				},
 				handlers = {
 					lsp_zero.default_setup,
+					gopls = function()
+						require("lspconfig").gopls.setup({
+							settings = {
+								gopls = {
+									hints = {
+										assignVariableTypes = true,
+										compositeLiteralFields = true,
+										compositeLiteralTypes = true,
+										constantValues = true,
+										functionTypeParameters = true,
+										parameterNames = true,
+										rangeVariableTypes = true,
+									},
+								},
+							},
+						})
+					end,
+
 					lua_ls = function()
 						-- (Optional) Configure lua language server for neovim
-						local lua_opts = lsp_zero.nvim_lua_ls()
-						require("lspconfig").lua_ls.setup(lua_opts)
+						require("lspconfig").lua_ls.setup({
+							settings = {
+								Lua = {
+									completion = {
+										callSnippet = "Replace",
+									},
+									hint = {
+										enable = true,
+										arrayIndex = "Disable",
+									},
+									diagnostic = {
+										globals = { "vim" },
+									},
+									workspace = {
+										library = { vim.env.VIMRUNTIME, vim.fn.stdpath("config") },
+									},
+								},
+							},
+						})
 					end,
 				},
 			})

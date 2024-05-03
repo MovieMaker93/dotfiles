@@ -1,110 +1,36 @@
-local ls = require "luasnip"
-local types = require "luasnip.util.types"
--- local make = R("devfortunato.snips").make
-local snippet_from_nodes = ls.sn
-local t = ls.text_node
-local s = ls.snippet
-local i = ls.insert_node
-local f = ls.function_node
-local c = ls.choice_node
-local d = ls.dynamic_node
-local sn = ls.snippet_node
-local fmt = require("luasnip.extras.fmt").fmt
-local fmta = require("luasnip.extras.fmt").fmta
-local rep = require("luasnip.extras").rep
+local types = require("luasnip.util.types")
+local ls = require("luasnip")
 
-ls.config.set_config {
-  -- This tells LuaSnip to remember to keep around the last snippet.
-  -- You can jump back into it even if you move outside of the selection
-  history = false,
+local custom_snips = NeovimPath .. "/lua/snippets"
+require("luasnip.loaders.from_lua").load({ paths = { custom_snips } })
+require("luasnip.loaders.from_vscode").lazy_load()
+require("luasnip").filetype_extend("java", { "groovy" })
 
-  -- This one is cool cause if you have dynamic snippets, it updates as you type!
-  updateevents = "TextChanged,TextChangedI",
+ls.config.set_config({
+	-- This tells LuaSnip to remember to keep around the last snippet.
+	-- You can jump back into it even if you move outside of the selection
+	history = false,
 
-  -- Autosnippets:
-  enable_autosnippets = true,
+	-- This one is cool cause if you have dynamic snippets, it updates as you type!
+	updateevents = "TextChanged,TextChangedI",
 
-  -- Crazy highlights!!
-  -- #vid3
-  -- ext_opts = nil,
-  ext_opts = {
-    [types.choiceNode] = {
-      active = {
-        virt_text = { { " « ", "NonTest" } },
-      },
-    },
-  },
-}
+	-- Autosnippets:
+	enable_autosnippets = true,
 
-local require_var = function(args, _)
-  local text = args[1][1] or ""
-  local split = vim.split(text, ".", { plain = true })
-
-  local options = {}
-  for len = 0, #split - 1 do
-    table.insert(options, t(table.concat(vim.list_slice(split, #split - len, #split), "_")))
-  end
-
-  return snippet_from_nodes(nil, {
-    c(1, options),
-  })
-end
-
-ls.add_snippets("all", {
-  -- basic, don't need to know anything else
-  --    arg 1: string
-  --    arg 2: a node
-  s("simple", t "wow, you were right!"),
-    s({ trig = "date" }, {
-        f(function()
-            return string.format(string.gsub(vim.bo.commentstring, "%%s", " %%s"), os.date())
-        end, {}),
-    }),
-})
-
-
-ls.add_snippets("markdown", {
-    s("t", fmt("- [{}] {}", { c(2, { t " ", t "-", t "x" }), i(1, "task") })),
-    s({
-        trig = "link",
-        namr = "markdown_link",
-        dscr = "Create markdown link [txt](url)"
-    },
-        {
-            t('['),
-            i(1),
-            t(']('),
-            i(0),
-            t(')'),
-        }),
-})
-
-ls.add_snippets("go", {
-    s("gom", fmt("func main(){{ \n {} \n }}", { i(1,"printf()")})),
-    s("ger", fmta(
-        [[
-        <val>,<err> := <f>(<args>)
-        if <err_same> != nil {
-            return err
-        }
-        <finish>
-        ]],
-        {
-            val = i(1),
-            err = i(2,"err"),
-            f = i(3),
-            args = i(4),
-            err_same = rep(2),
-            finish = i(0),
-        })),
-})
-
-
-ls.add_snippets("lua", {
-    s("req", fmt([[local {} = require("{}")]], {
-    d(2, require_var, { 1 }),
-    i(1),
-  })),
+	-- Crazy highlights!!
+	store_selection_keys = "<Tab>",
+	-- #vid3
+	-- ext_opts = nil,
+	ext_opts = {
+		[types.choiceNode] = {
+			active = {
+				virt_text = { { " « ", "NonTest" } },
+			},
+			passive = {
+				virt_text = { { "← Choice", "Comment" } },
+			},
+		},
+	},
 })
 
 local keymap = vim.api.nvim_set_keymap
@@ -114,9 +40,9 @@ keymap("s", "<c-j>", "<cmd>lua require'luasnip'.jump(-1)<CR>", opts)
 keymap("i", "<c-k>", "<cmd>lua require'luasnip'.jump(1)<CR>", opts)
 keymap("s", "<c-k>", "<cmd>lua require'luasnip'.jump(1)<CR>", opts)
 vim.keymap.set("i", "<c-l>", function()
-  if ls.choice_active() then
-    ls.change_choice(1)
-  end
+	if ls.choice_active() then
+		ls.change_choice(1)
+	end
 end)
 
-vim.keymap.set("i", "<c-u>", require "luasnip.extras.select_choice")
+vim.keymap.set("i", "<c-u>", require("luasnip.extras.select_choice"))

@@ -1,10 +1,32 @@
 return {
 	{
 		"nvim-telescope/telescope.nvim",
-		dependencies = { "nvim-lua/plenary.nvim" },
+		dependencies = {
+			{ "nvim-lua/plenary.nvim" },
+			{ "jonarrien/telescope-cmdline.nvim" },
+			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+		},
+		dir = "/home/moviemaker/workspace/opensources/telescope/telescope.nvim",
 		keys = {
 			{ "<leader>pf", "<cmd>Telescope find_files<cr>", desc = "Find file" },
+			{ "<leader>cmd", "<cmd>Telescope cmdline<cr>", desc = "Cmdline" },
 		},
+		config = function(_, opts)
+			require("telescope").setup(opts)
+			require("telescope").load_extension("cmdline")
+			pcall(require("telescope").load_extension, "fzf")
+		end,
+	},
+	{
+		"MovieMaker93/telescope-ghissue.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"nvim-telescope/telescope.nvim",
+		},
+		config = function()
+			require("telescope").load_extension("telescope_ghissue")
+			require("telescope_ghissue").setup({})
+		end,
 	},
 	{
 		"kristijanhusak/vim-dadbod-ui",
@@ -14,15 +36,14 @@ return {
 		"kristijanhusak/vim-dadbod-completion",
 	},
 	{
-		"numToStr/Comment.nvim",
+		"folke/ts-comments.nvim",
+		event = "VeryLazy",
+		enabled = vim.fn.has("nvim-0.10.0") == 1,
 		opts = {
 			-- add any options here
 		},
 		lazy = false,
 	},
-	-- {
-	-- "xiyaowong/transparent.nvim"
-	-- },
 	{
 		"folke/zen-mode.nvim",
 		cmd = "ZenMode",
@@ -36,20 +57,8 @@ return {
 		keys = { { "<leader>z", "<cmd>ZenMode<cr>", desc = "Zen Mode" } },
 	},
 	{
-		"laytan/cloak.nvim",
-	},
-	{
 		"nvim-tree/nvim-web-devicons",
 	},
-	-- {
-	--     "folke/trouble.nvim",
-	--     dependencies = { "nvim-tree/nvim-web-devicons" },
-	--     opts = {
-	--         -- your configuration comes here
-	--         -- or leave it empty to use the default settings
-	--         -- refer to the configuration section below
-	--     }
-	-- },
 	{
 		"nvim-neo-tree/neo-tree.nvim",
 		branch = "v3.x",

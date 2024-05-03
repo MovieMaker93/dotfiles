@@ -8,7 +8,7 @@ alias fv='nvim $(fzf)'
 
 #tmux alias
 alias tns='tmux new -s $(echo $(pwd) | xargs basename)'
-alias tx=tmuxinator
+alias tx=tmuxifier
 
 #kubectl aliases
 alias k='kubectl'
@@ -25,11 +25,12 @@ alias gaa='git add -A'
 alias gs='git status --short'
 alias gst='git status'
 alias gc='git commit -m'
-alias gca='git commit -a -m'
+alias gca='git commit --amend'
 alias gb='git branch'
 alias gco='git checkout'
 alias gp='git push origin $(git rev-parse --abbrev-ref HEAD)'
 alias gmg='git merge'
+alias gpf='git push --force'
 
 # gcap: commit all and push
 gcap() {
