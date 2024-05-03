@@ -166,6 +166,8 @@
       changed_when: false
     - name: Check if Jetbrains Mono exists
       ansible.builtin.shell: "mkdir -p ~{{ remote_regular_user }}/.fonts"
+    - name: Install tpm
+      ansible.builtin.shell: "git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm"
     - name: Install build essential macos
       ansible.builtin.shell: "xcode-select --install"
       when: ansible_facts['distribution'] == "MacOSX"
