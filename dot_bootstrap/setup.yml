@@ -56,7 +56,6 @@
           - fzf
           - tmux
           - make
-          - docker
           - python
           - zsh-autosuggestions
           - zsh-syntax-highlighting
