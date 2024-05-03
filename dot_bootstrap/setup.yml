@@ -180,3 +180,6 @@
         owner: "{{ remote_regular_user }}"
     - name: Install  Oh My shz
       ansible.builtin.shell: "sh -c '$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)'"
+    - name: Brew tap fonts
+      ansible.builtin.shell: "brew tap homebrew/cask-fonts && brew install font-jetbrains-mono"
+    
