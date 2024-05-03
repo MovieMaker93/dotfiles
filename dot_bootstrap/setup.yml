@@ -70,7 +70,6 @@
         package:
           - alfred
           - rectangle
-          - iterm2
           - obsidian
           - wezterm
         state: present
