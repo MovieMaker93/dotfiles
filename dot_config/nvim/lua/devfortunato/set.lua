@@ -30,6 +30,7 @@ vim.opt.signcolumn = "yes"
 vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 1000
+vim.opt.conceallevel = 1
 
 vim.opt.colorcolumn = "80"
 opt.wildignore = "__pycache__"
